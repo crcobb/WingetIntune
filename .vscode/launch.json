@@ -13,11 +13,20 @@
     },
     {
       "name": "Build and Load PowerShell Module",
-      "type": "PowerShell",
+      "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "dotnet: build-module", // replace with your actual build task name
-      "script": "Import-Module .\\bin\\Debug\\net6.0\\WinTuner.psd1  -Verbose", // replace with your actual script path
-      "cwd": "${workspaceFolder}\\src\\Svrooij.WinTuner.CmdLets"
+      //"script": "Import-Module .\\bin\\Debug\\net6.0\\WinTuner.psd1  -Verbose", // replace with your actual script path
+      "program" : "pwsh",
+      "args": [
+        "-NoExit",
+        "-NoProfile",
+        "-Command",
+        "Import-Module .\\bin\\Debug\\net6.0\\Svrooij.WinTuner.CmdLets.dll",
+      ],
+      "cwd": "${workspaceFolder}\\src\\Svrooij.WinTuner.CmdLets",
+      "stopAtEntry" : false,
+      "console": "integratedTerminal"
     },
     {
       "name": ".NET Core Package Microsoft SQL Server Management Studio",

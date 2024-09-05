@@ -503,7 +503,7 @@ public partial class IntuneManager
             ?? package.GetBestFit(Architecture.Neutral, InstallerContext.Unknown, packageOptions.Locale)
             ?? package.GetBestFit(Architecture.Neutral, packageOptions.InstallerContext, packageOptions.Locale)
             ?? package.GetBestFit(packageOptions.Architecture, InstallerContext.Unknown, packageOptions.Locale);
-        if (installer == null && packageOptions.Architecture == Architecture.X64)
+        if (installer == null ) // && packageOptions.Architecture == Architecture.X64)
         {
             installer = package.GetBestFit(Architecture.X86, packageOptions.InstallerContext)
                 ?? package.GetBestFit(Architecture.X86, InstallerContext.Unknown);

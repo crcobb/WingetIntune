@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using WingetIntune.Graph;
 using WingetIntune.Intune;
 using GraphModels = Microsoft.Graph.Beta.Models;
+using Microsoft.Graph.Beta.DeviceAppManagement.MobileApps.Item.Assign;
+using System.Collections.Generic;
 
 namespace Svrooij.WinTuner.CmdLets.Commands;
 /// <summary>
@@ -243,9 +245,26 @@ public class DeployWtWin32App : BaseIntuneCmdlet
                 var assignments = oldWin32App.Assignments;
                 foreach (var assignment in assignments)
                 {
+                    logger?.LogInformation("Copying app assignments {assignment}", assignment);
                     if (assignment.Intent == GraphModels.InstallIntent.Available && assignment.Settings is null)
                     {
-                        assignment.Settings = new GraphModels.Win32LobAppAssignmentSettings { AutoUpdateSettings = new GraphModels.Win32LobAppAutoUpdateSettings { AutoUpdateSupersededApps = GraphModels.Win32LobAppAutoUpdateSupersededApps.Enabled } };
+                        //assignment.Settings = new GraphModels.Win32LobAppAssignmentSettings { AutoUpdateSettings = new GraphModels.Win32LobAppAutoUpdateSettings { AutoUpdateSupersededApps = GraphModels.Win32LobAppAutoUpdateSupersededApps.Enabled } };
+                    }
+                    else if (assignment.Intent == GraphModels.InstallIntent.Available && assignment.Settings is not null)
+                    {
+                        //assignment.Settings = new GraphModels.Win32LobAppAssignmentSettings { AutoUpdateSettings = new GraphModels.Win32LobAppAutoUpdateSettings { AutoUpdateSupersededApps = GraphModels.Win32LobAppAutoUpdateSupersededApps.Enabled } };
+                        //assignment.Settings.AutoUpdateSettings =  new GraphModels.Win32LobAppAutoUpdateSettings { AutoUpdateSupersededApps = GraphModels.Win32LobAppAutoUpdateSupersededApps.Enabled };
+                       	/*
+                        assignment.Settings.AdditionalData = new Dictionary<string, object>
+				        {
+					        {
+                                "autoUpdateSettings" , new 
+                                {
+                                    OdataType = "#microsoft.graph.win32LobAppAutoUpdateSettings",
+                                    AutoUpdateSupersededAppsState = "enabled",
+                                }
+                            },
+                        }; */
                     }
                 }
 
@@ -255,10 +274,11 @@ public class DeployWtWin32App : BaseIntuneCmdlet
                 }));
 
                 // Remove assignments from old app
-                await batch.AddBatchRequestStepAsync(graphServiceClient.DeviceAppManagement.MobileApps[oldAppId].Assign.ToPostRequestInformation(new Microsoft.Graph.Beta.DeviceAppManagement.MobileApps.Item.Assign.AssignPostRequestBody
-                {
-                    MobileAppAssignments = new System.Collections.Generic.List<GraphModels.MobileAppAssignment>()
-                }));
+                // Removing the assignment may be causing issues with the update process.  Commenting out for testing
+                //await batch.AddBatchRequestStepAsync(graphServiceClient.DeviceAppManagement.MobileApps[oldAppId].Assign.ToPostRequestInformation(new Microsoft.Graph.Beta.DeviceAppManagement.MobileApps.Item.Assign.AssignPostRequestBody
+                //{
+                //    MobileAppAssignments = new System.Collections.Generic.List<GraphModels.MobileAppAssignment>()
+                //}));
             }
 
             // Execute batch
